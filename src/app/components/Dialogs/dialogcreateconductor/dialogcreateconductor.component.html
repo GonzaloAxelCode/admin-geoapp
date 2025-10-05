@@ -1,0 +1,196 @@
+<div class="relative">
+  <!-- Overlay de loading -->
+  <div *ngIf="loadingCreateConductor$ | async" 
+       class="absolute inset-0 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-lg">
+    <div class="flex flex-col items-center gap-3">
+      <tui-loader size="xl" [overlay]="true"></tui-loader>
+      <p class="text-sm font-medium text-neutral-600 dark:text-neutral-300">
+        Creando conductor...
+      </p>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <form 
+    *ngIf="formConductor" 
+    [formGroup]="formConductor" 
+    (ngSubmit)="onSubmit()" 
+    class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto p-1"
+    [class.pointer-events-none]="loadingCreateConductor$ | async"
+    [class.opacity-50]="loadingCreateConductor$ | async">
+
+    <!-- SECCIÓN: CREDENCIALES -->
+    <div class="col-span-1 md:col-span-2">
+      <h3 class="text-lg font-bold mb-3 text-blue-500 dark:text-blue-400">🔐 Credenciales de Acceso</h3>
+    </div>
+
+    <!-- Usuario -->
+    <label tuiLabel>
+      Username *
+      <tui-textfield>
+        <input tuiTextfield formControlName="username" placeholder="usuario123" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('username')?.invalid && formConductor.get('username')?.touched">
+        El usuario es obligatorio
+      </tui-error>
+    </label>
+
+    <!-- Contraseña -->
+    <label tuiLabel>
+      Contraseña *
+      <tui-textfield>
+        <input tuiTextfield type="password" formControlName="password" placeholder="Mínimo 6 caracteres" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('password')?.invalid && formConductor.get('password')?.touched">
+        La contraseña debe tener al menos 6 caracteres
+      </tui-error>
+    </label>
+
+    <!-- SECCIÓN: DATOS PERSONALES -->
+    <div class="col-span-1 md:col-span-2 mt-4">
+      <h3 class="text-lg font-bold mb-3 text-green-500 dark:text-green-400">👤 Datos Personales</h3>
+    </div>
+
+    <!-- Nombre -->
+    <label tuiLabel>
+      Nombres *
+      <tui-textfield>
+        <input tuiTextfield formControlName="nombres" placeholder="Juan Carlos" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('nombres')?.invalid && formConductor.get('nombres')?.touched">
+        El nombre es obligatorio
+      </tui-error>
+    </label>
+
+    <!-- Apellidos -->
+    <label tuiLabel>
+      Apellidos *
+      <tui-textfield>
+        <input tuiTextfield formControlName="apellidos" placeholder="Pérez García" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('apellidos')?.invalid && formConductor.get('apellidos')?.touched">
+        Los apellidos son obligatorios
+      </tui-error>
+    </label>
+
+    <!-- DNI -->
+    <label tuiLabel>
+      DNI *
+      <tui-textfield>
+        <input tuiTextfield formControlName="dni" placeholder="12345678" maxlength="8" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('dni')?.invalid && formConductor.get('dni')?.touched">
+        El DNI debe tener 8 dígitos
+      </tui-error>
+    </label>
+
+    <!-- Teléfono -->
+    <label tuiLabel>
+      Teléfono *
+      <tui-textfield>
+        <input tuiTextfield formControlName="telefono" placeholder="987654321" maxlength="9" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('telefono')?.invalid && formConductor.get('telefono')?.touched">
+        El teléfono debe tener 9 dígitos
+      </tui-error>
+    </label>
+
+    <!-- Email -->
+    <label tuiLabel>
+      Correo Electrónico
+      <tui-textfield>
+        <input tuiTextfield type="email" formControlName="correo_electronico" placeholder="ejemplo@correo.com" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('correo_electronico')?.invalid && formConductor.get('correo_electronico')?.touched">
+        Ingrese un email válido
+      </tui-error>
+    </label>
+
+    <!-- Dirección -->
+    <label tuiLabel>
+      Dirección
+      <tui-textfield>
+        <input tuiTextfield formControlName="direccion" placeholder="Av. Principal 123" />
+      </tui-textfield>
+    </label>
+
+    <!-- SECCIÓN: VEHÍCULO -->
+    <div class="col-span-1 md:col-span-2 mt-4">
+      <h3 class="text-lg font-bold mb-3 text-purple-500 dark:text-purple-400">🚗 Datos del Vehículo</h3>
+    </div>
+
+    <!-- Placa -->
+    <label tuiLabel class="col-span-1 md:col-span-2">
+      Placa del Vehículo *
+      <tui-textfield>
+        <input tuiTextfield formControlName="placa_auto" placeholder="ABC-123" style="text-transform: uppercase;" />
+      </tui-textfield>
+      <tui-error *ngIf="formConductor.get('placa_auto')?.invalid && formConductor.get('placa_auto')?.touched">
+        La placa debe tener el formato ABC-123
+      </tui-error>
+    </label>
+    <!--
+ 
+    <div class="col-span-1 md:col-span-2 mt-4">
+      <h3 class="text-lg font-bold mb-3 text-orange-500 dark:text-orange-400">⚙️ Configuraciones</h3>
+    </div>
+
+
+    <label tuiLabel class="flex items-center justify-between">
+      <span>Usuario Activo</span>
+      <tui-switch formControlName="active_user"></tui-switch>
+    </label>
+
+
+    <label tuiLabel class="flex items-center justify-between">
+      <span>Notificaciones</span>
+      <tui-switch formControlName="show_notifications"></tui-switch>
+    </label>
+
+
+    <label tuiLabel class="flex items-center justify-between">
+      <span>Voz Activada</span>
+      <tui-switch formControlName="voice_enabled"></tui-switch>
+    </label>
+
+
+    <label tuiLabel>
+      Tema
+      <tui-select formControlName="theme">
+        <tui-data-list-wrapper *tuiDataList [items]="themes"></tui-data-list-wrapper>
+      </tui-select>
+    </label>
+
+
+    <label tuiLabel class="col-span-1 md:col-span-2">
+      Tipo de Mapa
+      <tui-select formControlName="map_type">
+        <tui-data-list-wrapper *tuiDataList [items]="mapTypes"></tui-data-list-wrapper>
+      </tui-select>
+    </label>
+ -->
+    <!-- Botones -->
+    <div class="col-span-1 md:col-span-2 flex justify-end gap-2 mt-6 pt-4 border-t dark:border-neutral-700">
+      <button 
+        tuiButton 
+        type="button" 
+        appearance="flat"
+        (click)="context.completeWith(false)"
+        [disabled]="loadingCreateConductor$ | async">
+        Cancelar
+      </button>
+      <button 
+        tuiButton 
+        type="submit" 
+        appearance="primary" 
+        [disabled]="formConductor.invalid || (loadingCreateConductor$ | async)">
+        <span *ngIf="!(loadingCreateConductor$ | async)">Guardar Conductor</span>
+        <span *ngIf="loadingCreateConductor$ | async" class="flex items-center gap-2">
+          <tui-loader size="s"></tui-loader>
+          Guardando...
+        </span>
+      </button>
+    </div>
+
+  </form>
+</div>

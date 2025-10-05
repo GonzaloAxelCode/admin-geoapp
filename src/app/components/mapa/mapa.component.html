@@ -1,0 +1,16 @@
+<div 
+  id="map" 
+  class="map transition-all duration-500 ease-in-out"
+  (mouseenter)="expandMap()"
+  (mouseleave)="shrinkMap()"
+></div>
+<button tuiButton appearance="primary" (click)="toggleAnimation()">
+  <ng-container *ngIf="isAnimating; else playIcon">
+    <tui-icon icon="pause"></tui-icon>
+  </ng-container>
+  <ng-template #playIcon>
+    <tui-icon icon="play"></tui-icon>
+  </ng-template>
+</button>
+
+

@@ -1,0 +1,76 @@
+<header>
+  <nav class="relative dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:bottom-0 dark:after:h-px dark:after:bg-white/10">
+    
+    <div class="flex justify-between items-center p-3 w-full">
+
+      <!-- Botón mobile: izquierda -->
+      <div class="flex md:hidden">
+        <button size="m" appearance="flat-grayscale" iconStart="@tui.align-justify" tuiButton type="button"
+          (click)="openSidebar()">
+        </button>
+      </div>
+
+      <!-- Logo: oculto en móvil -->
+      <div class="hidden md:block">
+       <app-logowithname></app-logowithname>
+          
+      </div>
+
+   <div class="hidden sm:ml-6 sm:flex space-x-4">
+
+  <a routerLink="/admin"
+     [routerLinkActiveOptions]="{ exact: true }"
+     routerLinkActive="bg-gray-300 dark:bg-neutral-700"
+     class="rounded-md px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
+            hover:bg-gray-300 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-200">
+    Admin
+  </a>
+
+  
+  <a routerLink="/admin/conductores"
+     routerLinkActive="bg-gray-300 dark:bg-neutral-700"
+     class="rounded-md px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
+            hover:bg-gray-300 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-200">
+    Conductores
+  </a>
+</div>
+
+
+      <!-- Dropdown usuario: siempre a la derecha -->
+      <div class="flex items-center gap-5 ml-auto">
+        <button tuiButton tuiChevron tuiDropdownOpen size="m" type="button" appearance="flat"
+          tuiAppearanceMode="checked invalid" [tuiDropdown]="content">
+          <div tuiFade tuiFadeHeight="1rem" tuiFadeOffset="0.5rem" class="flex justify-between items-center gap-3">
+            <label class="flex gap-3 justify-between">
+              <tui-avatar size="s"
+                src="https://res.cloudinary.com/ddksrkond/image/upload/v1714184531/ebmxpzh5wqtcus0uypu6.png" />
+            </label>
+          </div>
+        </button>
+
+        <ng-template #content>
+          <tui-data-list role="menu" size="s">
+            <tui-opt-group class="flex flex-col gap-2">
+              <span class="text-black dark:text-white text-sm ml-2">
+                <span class="font-bold text-xs mr-1">User:{{user.username}}</span>
+              </span>
+
+              <a #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption
+                [attr.aria-checked]="rla.isActive" class="w-[200px]">
+                <app-darkmode></app-darkmode>
+              </a>
+
+              <a (click)="logout()" #rla="routerLinkActive" role="menuitemradio" routerLinkActive tuiOption
+                [attr.aria-checked]="rla.isActive" class="w-[200px]">
+                <tui-icon *ngIf="rla.isActive" icon="@tui.check" />
+                Cerrar Session
+              </a>
+
+            </tui-opt-group>
+          </tui-data-list>
+        </ng-template>
+      </div>
+
+    </div>
+  </nav>
+</header>

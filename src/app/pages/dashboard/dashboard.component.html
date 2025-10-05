@@ -1,0 +1,75 @@
+<section class="w-full min-h-screen">
+  <!-- Buscador -->
+  <div class="w-full px-4 sm:px-6 py-4 sm:py-6">
+    <div class="max-w-5xl mx-auto">
+      <tui-textfield iconEnd="@tui.search" class="w-full">
+        <label tuiLabel>Buscar por placa o nombre</label>
+        <input
+          #input
+          (ngModelChange)="onSearchChange($event)"
+          placeholder="AAA-000"
+          tuiTextfield
+          [(ngModel)]="value"
+        />
+        <tui-icon tuiTooltip="Escriba el numero de placa o nombre de usuario" />
+      </tui-textfield>
+    </div>
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="w-full px-4 sm:px-6 pb-6" *ngIf="vm$ | async as vm">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Estado de carga -->
+      <div *ngIf="vm.isLoading" class="text-center py-8 sm:py-12">
+        <div class="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-neutral-600 dark:border-neutral-400"></div>
+        <p class="text-neutral-500 dark:text-neutral-400 text-base sm:text-lg mt-4">
+          Cargando conductores...
+        </p>
+      </div>
+
+      <!-- Mensaje cuando no hay conductores -->
+      <div *ngIf="!vm.isLoading && vm.conductores.length === 0" class="text-center py-8 sm:py-12">
+        <div class="text-4xl sm:text-6xl mb-4">🚗</div>
+        <p class="text-neutral-500 dark:text-neutral-400 text-base sm:text-lg px-4">
+          {{ vm.searchQuery.trim() ? 'No se encontraron conductores con ese criterio' : 'No hay conductores disponibles' }}
+        </p>
+      </div>
+
+      <!-- Grid de conductores -->
+      <div
+        *ngIf="!vm.isLoading && vm.conductores.length > 0"
+        class="grid gap-3 sm:gap-4 
+               grid-cols-2 
+               xs:grid-cols-3 
+               sm:grid-cols-4 
+               md:grid-cols-5 
+               lg:grid-cols-6 
+               xl:grid-cols-7 
+               2xl:grid-cols-8">
+        <a
+          [routerLink]="'/admin/unidad/' + item.id_user"
+          *ngFor="let item of vm.conductores"
+          tuiHint="Ver historial"
+          class="flex flex-col items-center justify-center
+                 dark:border-neutral-700 border border-neutral-200
+                 bg-neutral-100 dark:bg-neutral-800 rounded-lg 
+                 h-[90px] sm:h-[100px] md:h-[110px]
+                 hover:shadow-lg hover:scale-105 
+                 transition-all duration-200 
+                 cursor-pointer
+                 p-2">
+          <span class="font-bold uppercase text-sm sm:text-base lg:text-lg tracking-wide text-neutral-600 dark:text-neutral-100 truncate w-full text-center">
+            {{ item.placa_auto }}
+          </span>
+          <span class="my-1">
+            <span tuiStatus="var(--tui-status-positive)" class="text-xs">Activo</span>
+          </span>
+          <span class="text-[10px] sm:text-xs text-neutral-600 dark:text-neutral-100 truncate w-full text-center px-1">
+            {{ item.username }} {{ item.apellidos }}
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

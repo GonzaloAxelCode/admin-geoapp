@@ -1,0 +1,14 @@
+@import "leaflet/dist/leaflet.css";
+
+.leaflet-container {
+  width: 100%;
+  height: 400px; /* Ajusta la altura */
+  border-radius: 12px;
+}
+.map {
+  height: 100px; /* altura inicial */
+  width: 100%;
+}
+.map.expanded {
+  height: 500px; /* altura al hover */
+}

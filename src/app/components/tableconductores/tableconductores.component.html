@@ -1,0 +1,80 @@
+<div class="sm:p-6 rounded-lg" [tuiSkeleton]="!!(conductoresState$ | async)?.loadingLoadConductores">
+  <!-- Si no hay conductores -->
+  <tui-block-status
+    *ngIf="((conductoresState$ | async)?.conductores?.length === 0) && !(conductoresState$ | async)?.loadingLoadConductores; else contenido"
+    size="m"
+    class="m-auto"
+  >
+    <img
+      alt="no-data"
+      src="https://res.cloudinary.com/ddksrkond/image/upload/v1743382501/APP%20INVENTARIO/undraw_no-data_ig65_k666oz.svg"
+      tuiSlot="top"
+      class="max-w-[200px] sm:max-w-[300px] mx-auto"
+    />
+    <h4 class="text-base sm:text-lg">Aún no tienes ningún conductor</h4>
+    <span class="text-sm sm:text-base">Empieza a crear tus primeros conductores</span>
+  </tui-block-status>
+
+  <!-- Contenido de conductores -->
+  <ng-template #contenido>
+    <!-- OPCIÓN 1: Cards Grid (Recomendado para móvil y desktop) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+      <div 
+        *ngFor="let conductor of (conductoresState$ | async)?.conductores"
+        class="rounded-xl p-4 sm:p-6 
+               dark:bg-neutral-800 bg-white 
+               border dark:border-neutral-700 border-neutral-200
+               shadow-sm hover:shadow-lg 
+               transition-all duration-200">
+        
+        <!-- Header de la card -->
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg sm:text-xl shrink-0">
+              {{ conductor.nombres?.charAt(0) }}{{ conductor.apellidos?.charAt(0) }}
+            </div>
+            <div class="min-w-0 flex-1">
+              <h3 class="text-base sm:text-lg font-bold truncate">
+                {{ conductor.nombres }} {{ conductor.apellidos }}
+              </h3>
+              <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 truncate">
+                {{ conductor.username }}
+              </p>
+            </div>
+          </div>
+          <tui-badge 
+            [appearance]="conductor.active_user ? 'positive' : 'negative'"
+            class="shrink-0">
+            {{ conductor.active_user ? 'Activo' : 'Inactivo' }}
+          </tui-badge>
+        </div>
+
+        <!-- Información del conductor -->
+        <div class="space-y-2 sm:space-y-3 mb-4">
+          <div class="flex items-center gap-2 text-sm">
+            <tui-icon icon="@tui.credit-card" class="text-neutral-500"></tui-icon>
+            <span class="text-neutral-600 dark:text-neutral-400">DNI:</span>
+            <span class="font-semibold">{{ conductor.dni }}</span>
+          </div>
+          
+          <div class="flex items-center gap-2 text-sm">
+            <tui-icon icon="@tui.phone" class="text-neutral-500"></tui-icon>
+            <span class="text-neutral-600 dark:text-neutral-400">Tel:</span>
+            <span class="font-semibold">{{ conductor.telefono }}</span>
+          </div>
+          
+          <div class="flex items-center gap-2 text-sm">
+            <tui-icon icon="@tui.car" class="text-neutral-500"></tui-icon>
+            <span class="text-neutral-600 dark:text-neutral-400">Placa:</span>
+            <span class="font-bold text-base tracking-widest">{{ conductor.placa_auto }}</span>
+          </div>
+        </div>
+
+      
+      </div>
+    </div>
+
+    
+
+  </ng-template>
+</div>

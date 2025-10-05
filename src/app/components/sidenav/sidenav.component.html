@@ -1,0 +1,55 @@
+<body class="grid relative h-screen">
+  <ng-template #sidebarTemplate>
+  <nav class="flex flex-col justify-between h-full bg-tui-background max-w-[200px]">
+  <div class="flex flex-col gap-2">
+    <a routerLink="/admin"
+      class="flex items-center gap-3 p-3 text-xl font-bold transition-all duration-300 ease-in-out text-white">
+      <app-logowithname></app-logowithname>
+    </a>
+
+    <a (click)="onClose()" 
+       routerLink="/admin" 
+       [routerLinkActiveOptions]="{ exact: true }" 
+       routerLinkActive="bg-gray-300 dark:bg-neutral-700"
+       class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+      <tui-icon icon="@tui.layout-grid" class="text-red-400"></tui-icon> 
+      <span>Admin</span>
+    </a>
+
+    <a (click)="onClose()" 
+       routerLink="/admin/conductores" 
+       routerLinkActive="bg-gray-300 dark:bg-neutral-700"
+       class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-300 dark:hover:bg-neutral-700 transition-all duration-300 ease-in-out">
+      <tui-icon icon="@tui.users" class="text-green-500"></tui-icon> 
+      <span>Conductores</span>
+    </a>
+  </div>
+</nav>
+  </ng-template>
+
+
+  <div class="flex md:hidden">
+    <tui-drawer *tuiPopup="open()" direction="left" class="drawer" [overlay]="true" (click.self)="onClose()">
+      <aside class="relative">
+        <div class="absolute right-0 top-0">
+          <button class="" tuiButton type="button" iconStart="@tui.x" size="s" appearance="floating"
+            (click)="onClose()">
+          </button>
+        </div>
+
+        <ng-container *ngTemplateOutlet="sidebarTemplate"></ng-container>
+      </aside>
+    </tui-drawer>
+  </div>
+  <div class="relative flex h-screen w-full">
+    <div class="flex  w-full mx-auto ">
+    
+      <div class="flex-1 relative overflow-y-auto h-screen">
+        <app-header></app-header>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</body>
+
+

@@ -1,0 +1,264 @@
+<section class="w-full min-h-screen p-3 sm:p-4 md:p-6">
+  <div class="max-w-[1600px] mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr,400px] xl:grid-cols-[1fr,450px] gap-4 sm:gap-6">
+      
+      <!-- ========== PANEL IZQUIERDO ========== -->
+      <div class="space-y-4 sm:space-y-6">
+        
+        <!-- Header Conductor -->
+        <div class="rounded-xl sm:rounded-2xl p-4 sm:p-6 dark:bg-gradient-to-br dark:from-neutral-800 dark:to-neutral-900 bg-gradient-to-br from-white to-neutral-50 border dark:border-neutral-700 shadow-lg">
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-4">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-xl sm:text-2xl font-bold shrink-0">
+              {{conductor?.nombres?.charAt(0)}}{{conductor?.apellidos?.charAt(0)}}
+            </div>
+            <div class="text-center sm:text-left flex-1 min-w-0">
+              <h2 class="text-xl sm:text-2xl font-bold">{{conductor?.nombres}} {{conductor?.apellidos}}</h2>
+              <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 truncate">{{conductor?.correo_electronico}}</p>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-3 sm:gap-4">
+            <div class="p-3 rounded-lg dark:bg-neutral-700/50 bg-neutral-100">
+              <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Placa</p>
+              <p class="text-lg sm:text-xl font-bold tracking-widest">{{conductor?.placa_auto}}</p>
+            </div>
+            <div class="p-3 rounded-lg dark:bg-neutral-700/50 bg-neutral-100">
+              <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Estado</p>
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full" 
+                      [ngClass]="conductor?.active_user === 1 ? 'bg-green-500' : 'bg-red-500'"></span>
+                <span class="text-sm sm:text-lg font-semibold">
+                  {{conductor?.active_user === 1 ? 'Activo' : 'Inactivo'}}
+                </span>
+              </div>
+            </div>
+            <div class="p-3 rounded-lg dark:bg-neutral-700/50 bg-neutral-100">
+              <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">DNI</p>
+              <p class="text-sm sm:text-lg font-semibold">{{conductor?.dni}}</p>
+            </div>
+            <div class="p-3 rounded-lg dark:bg-neutral-700/50 bg-neutral-100">
+              <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Teléfono</p>
+              <p class="text-sm sm:text-lg font-semibold">{{conductor?.telefono}}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selector Calendario -->
+        <div class="rounded-xl sm:rounded-2xl p-4 sm:p-6 dark:bg-neutral-800 bg-white border dark:border-neutral-700 shadow-lg">
+          <tui-textfield [content]="control.value?.daySame(today) ? 'Hoy' : ''">
+            <label tuiLabel>📅 Selecciona una fecha</label>
+            <input tuiInputDate [formControl]="control" />
+            <ng-template let-close tuiTextfieldDropdown>
+              <tui-calendar />
+              <button tuiButton appearance="primary" size="m" type="button" (click)="control.setValue(today); close()">
+                Ir a Hoy
+              </button>
+            </ng-template>
+          </tui-textfield>
+        </div>
+
+        <!-- Acordeón de Viajes -->
+        <div class="rounded-xl sm:rounded-2xl p-4 sm:p-6 dark:bg-neutral-800 bg-white border dark:border-neutral-700 shadow-lg">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+            <h3 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+              🚌 {{ vueltas.length }} Viaje{{ vueltas.length !== 1 ? 's' : '' }}
+            </h3>
+            <div *ngIf="!isLoading" class="text-xs sm:text-sm text-neutral-500">
+              {{ selectedDate | date:'d MMM yyyy' }}
+            </div>
+          </div>
+          
+          <!-- Loading Skeleton -->
+          <div *ngIf="isLoading" class="space-y-3 sm:space-y-4">
+            <div *ngFor="let i of [1,2,3]" 
+                 class="dark:bg-neutral-700/50 bg-neutral-100 rounded-xl p-3 sm:p-4 animate-pulse">
+              <div class="h-5 sm:h-6 w-3/4 bg-neutral-300 dark:bg-neutral-600 rounded mb-2 sm:mb-3"></div>
+              <div class="h-3 sm:h-4 w-1/2 bg-neutral-300 dark:bg-neutral-600 rounded"></div>
+            </div>
+          </div>
+
+          <!-- Sin Viajes -->
+          <div *ngIf="!isLoading && vueltas.length === 0" 
+               class="dark:bg-neutral-700/30 bg-neutral-50 rounded-xl p-6 sm:p-8 text-center">
+            <div class="text-4xl sm:text-6xl mb-3 sm:mb-4">📭</div>
+            <p class="text-sm sm:text-lg text-neutral-500 dark:text-neutral-400">
+              No hay viajes registrados para esta fecha
+            </p>
+          </div>
+
+          <!-- Lista de Viajes -->
+          <div *ngIf="!isLoading" class="space-y-3 sm:space-y-4">
+            <div *ngFor="let vuelta of vueltas">
+              <div class="dark:bg-neutral-700/50 bg-neutral-50 border dark:border-neutral-600 rounded-xl overflow-hidden cursor-pointer hover:shadow-md transition-all"
+                   (click)="toggle(vuelta)">
+                <div class="px-4 sm:px-5 py-3 sm:py-4">
+                  <div class="flex justify-between items-start gap-3 mb-2">
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-base sm:text-lg font-bold mb-1">{{ vuelta.titulo }}</h4>
+                      <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
+                        <span class="flex items-center gap-1">
+                          🕐 {{ formatTime(vuelta.horaInicio) }}
+                        </span>
+                        <span class="hidden xs:inline">→</span>
+                        <span class="flex items-center gap-1">
+                          🏁 {{ formatTime(vuelta.horaFin) }}
+                        </span>
+                      </div>
+                    </div>
+                    <tui-icon icon="@tui.chevron-down" 
+                              [class.rotate-180]="vuelta.abierto"
+                              class="transition-transform text-xl sm:text-2xl shrink-0"></tui-icon>
+                  </div>
+                  
+                  <div class="flex flex-wrap gap-2 mt-3">
+                    <span class="px-2 sm:px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400">
+                      {{ vuelta.totalTramos }} tramos
+                    </span>
+                    <span class="px-2 sm:px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
+                      {{ vuelta.tramosATiempo }} completados
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="transition-all duration-500 overflow-hidden"
+                     [style.maxHeight]="vuelta.abierto ? '3000px' : '0'">
+                  <div class="px-4 sm:px-5 pb-3 sm:pb-4 space-y-2">
+                    <div *ngFor="let d of vuelta.detalles" 
+                         class="p-3 rounded-lg dark:bg-neutral-800 bg-white border dark:border-neutral-600"
+                         [class.opacity-50]="d.saltado">
+                      <div class="flex flex-col gap-2">
+                        <div class="flex justify-between items-start gap-2">
+                          <p class="text-sm sm:text-base font-semibold flex-1">{{ d.tramo }}</p>
+                          <div class="flex items-center gap-2 shrink-0">
+                            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full" 
+                                  [ngClass]="{
+                                    'bg-green-500': d.color === 'green',
+                                    'bg-yellow-500': d.color === 'yellow',
+                                    'bg-red-500': d.color === 'red',
+                                    'bg-gray-500': d.color === 'gray'
+                                  }"></span>
+                            <span class="font-mono text-xs sm:text-sm font-semibold"
+                                  [ngClass]="{
+                                    'text-green-400': d.color === 'green',
+                                    'text-yellow-400': d.color === 'yellow',
+                                    'text-red-400': d.color === 'red',
+                                    'text-gray-400': d.color === 'gray'
+                                  }">
+                              {{ d.estado }}
+                            </span>
+                          </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
+                          <span>Inicio: <strong>{{ d.horaInicio }}</strong></span>
+                          <span>Esperado: <strong>{{ d.horaFin }}</strong></span>
+                          <span>Marca: <strong>{{ d.horaMarca }}</strong></span>
+                        </div>
+                        <div *ngIf="d.saltado">
+                          <span class="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 inline-block">
+                            ⚠️ Tramo saltado
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== PANEL DERECHO - ESTADÍSTICAS ========== -->
+      <div class="space-y-4 sm:space-y-6">
+        
+        <!-- Fecha Seleccionada -->
+        <div class="rounded-xl sm:rounded-2xl p-4 sm:p-6 dark:bg-neutral-800 bg-white border dark:border-neutral-700 shadow-lg">
+          <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mb-1">Mostrando datos de:</p>
+          <p class="text-lg sm:text-xl lg:text-2xl font-bold">{{ selectedDate | date:'fullDate' }}</p>
+        </div>
+
+        <!-- Resumen del Día -->
+        <div class="rounded-xl sm:rounded-2xl p-4 sm:p-6 dark:bg-gradient-to-br dark:from-blue-900/30 dark:to-blue-800/20 bg-gradient-to-br from-blue-50 to-blue-100 border dark:border-blue-700/50 border-blue-200 shadow-lg">
+          <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
+            📊 Resumen del Día
+          </h3>
+          
+          <div class="space-y-2 sm:space-y-3">
+            <div class="flex justify-between items-center p-2 sm:p-3 rounded-lg dark:bg-neutral-800/50 bg-white/70">
+              <span class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300">Total de Viajes</span>
+              <span class="text-xl sm:text-2xl font-bold text-blue-500">{{ estadisticas.totalViajes }}</span>
+            </div>
+            
+            <div class="flex justify-between items-center p-2 sm:p-3 rounded-lg dark:bg-neutral-800/50 bg-white/70">
+              <span class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300">Viajes a Tiempo</span>
+              <span class="text-xl sm:text-2xl font-bold text-green-500">{{ estadisticas.viajesATiempo }}</span>
+            </div>
+            
+            <div class="flex justify-between items-center p-2 sm:p-3 rounded-lg dark:bg-neutral-800/50 bg-white/70">
+              <span class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300">Viajes Retrasados</span>
+              <span class="text-xl sm:text-2xl font-bold text-red-500">{{ estadisticas.viajesRetrasados }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desempeño de Tramos -->
+        <div class="rounded-xl sm:rounded-2xl p-4 sm:p-6 dark:bg-gradient-to-br dark:from-purple-900/30 dark:to-purple-800/20 bg-gradient-to-br from-purple-50 to-purple-100 border dark:border-purple-700/50 border-purple-200 shadow-lg">
+          <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
+            🎯 Desempeño de Tramos
+          </h3>
+          
+          <div class="space-y-3 sm:space-y-4">
+            <!-- Tramos Completados -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-xs sm:text-sm font-medium">Tramos Completados</span>
+                <span class="text-base sm:text-lg font-bold text-green-500">{{ estadisticas.tramosCompletados }}</span>
+              </div>
+              <div class="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full transition-all duration-500" 
+                     [style.width]="estadisticas.porcentajePuntualidad + '%'"></div>
+              </div>
+            </div>
+            
+            <!-- Tramos Saltados -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-xs sm:text-sm font-medium">Tramos Saltados</span>
+                <span class="text-base sm:text-lg font-bold text-yellow-500">{{ estadisticas.tramosSaltados }}</span>
+              </div>
+              <div class="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
+                <div class="bg-yellow-500 h-2 rounded-full transition-all duration-500" 
+                     [style.width]="((estadisticas.tramosSaltados / (estadisticas.tramosCompletados + estadisticas.tramosSaltados || 1)) * 100) + '%'"></div>
+              </div>
+            </div>
+
+            <!-- Tasa de Puntualidad -->
+            <div class="p-3 sm:p-4 rounded-lg dark:bg-neutral-800/50 bg-white/70 mt-3 sm:mt-4">
+              <div class="text-center">
+                <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mb-1">Tasa de Puntualidad</p>
+                <p class="text-3xl sm:text-4xl font-bold" 
+                   [ngClass]="{
+                     'text-green-500': estadisticas.porcentajePuntualidad >= 90,
+                     'text-yellow-500': estadisticas.porcentajePuntualidad >= 70 && estadisticas.porcentajePuntualidad < 90,
+                     'text-red-500': estadisticas.porcentajePuntualidad < 70
+                   }">
+                  {{ estadisticas.porcentajePuntualidad }}%
+                </p>
+              </div>
+            </div>
+
+            <!-- Promedio de Retraso -->
+            <div class="p-3 sm:p-4 rounded-lg dark:bg-neutral-800/50 bg-white/70">
+              <div class="text-center">
+                <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mb-1">Promedio de Retraso</p>
+                <p class="text-2xl sm:text-3xl font-bold text-orange-500">
+                  {{ estadisticas.promedioRetraso }} <span class="text-base sm:text-lg">min</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
